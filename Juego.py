@@ -57,7 +57,10 @@ def play_back_ground():
     x_background -= 1
 
 def play_game():
-    pass
+    # Detectar clics del mouse
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        print(f"Clic detectado en {event.pos}, botón: {event.button}")
+        
 
 
 
