@@ -62,6 +62,23 @@ def play_game():
         print(f"Clic detectado en {event.pos}, botón: {event.button}")
         
 
+def draw_tic_tac_toe_board():
+    # Tamaño de cada celda
+    cell_size = 180
+
+    # Calcula los márgenes para centrar el tablero
+    margin_left = (1080 - cell_size * 3) // 2  # 270 píxeles
+    margin_top = (600 - cell_size * 3) // 2  # 30 píxeles
+
+    # Dibuja las líneas horizontales
+    for i in range(1, 3):  # Dos líneas horizontales
+        pygame.draw.line(PANTALLA, ROJO, (margin_left, margin_top + cell_size * i),
+                         (margin_left + cell_size * 3, margin_top + cell_size * i), 5)
+
+    # Dibuja las líneas verticales
+    for i in range(1, 3):  # Dos líneas verticales
+        pygame.draw.line(PANTALLA, ROJO, (margin_left + cell_size * i, margin_top),
+                         (margin_left + cell_size * i, margin_top + cell_size * 3), 5)
 
 
 while True:
@@ -69,8 +86,10 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-            
-    play_back_ground()
+
+    PANTALLA.fill(BLANCO)
+    draw_tic_tac_toe_board()        
+    #play_back_ground()
     play_game()
 
 
