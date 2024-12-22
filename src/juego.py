@@ -2,6 +2,7 @@ import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO
+import random
 
 PANTALLA, FPS, RELOJ, img_o, img_x = init_game(pygame)
 
@@ -170,6 +171,22 @@ PANTALLA.fill(BLANCO)
 draw_reset_button()
 draw_tic_tac_toe_board()
 
+contra_la_maquina = True
+def random_machine_play():
+    logro = False
+    cant_intentos = 0
+    while not logro:
+        fila = random.randint(0, 2)
+        columna = random.randint(0, 2)
+        try:
+            play_game(fila, columna)
+            logro = True
+        except (InvalidInputError, CellOccupiedError) as e:
+            cant_intentos+=1
+            if cant_intentos == 10:
+                print("La maquina fallo demasiado. TODO: hacer que solo pueda elegir random alguno de los lugares libres y listo")
+                return
+
 while True:
     for event in pygame.event.get():
         if event.type == QUIT: # type: ignore
@@ -183,10 +200,16 @@ while True:
             fila = get_fila(clic_y)
             columna = get_columna(clic_x)
 
+            player_jugo = False
             try:
                 play_game(fila, columna)
+                player_jugo = True
             except (InvalidInputError, CellOccupiedError) as e:
                 print(e)
+
+            if player_jugo and contra_la_maquina:
+                random_machine_play()
+
 
             check_reset(event)
 
