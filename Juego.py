@@ -1,6 +1,13 @@
 import pygame, sys
 from pygame.locals import *
 
+class InvalidInputError(Exception):
+    """Custom exception for invalid input."""
+    pass
+class CellOccupiedError(Exception):
+    """Custom exception for occupied cell."""
+    pass
+
 pygame.init()
 #tamaño de la ventana
 ancho_ventana= 1080
@@ -145,13 +152,11 @@ def play_game(fila, columna):
     if debo_reiniciar:
         return
     
-    if fila == None or columna == None:
-        print("no le pegaste a nada negro")
-        return
+    if fila is None or columna is None:
+        raise InvalidInputError("No le pegaste a nada, negro")
     
     if tablero[fila][columna] != 0:
-        print("ya esta ocupado negro usurero")
-        return
+        raise CellOccupiedError("Ya está ocupado, negro usurero")
 
 
     #updating internal structure
@@ -259,7 +264,11 @@ while True:
             fila = get_fila(clic_y)
             columna = get_columna(clic_x)
 
-            play_game(fila, columna)
+            try:
+                play_game(fila, columna)
+            except (InvalidInputError, CellOccupiedError) as e:
+                print(e)
+
             check_reset(event)
 
     if limpiar:
