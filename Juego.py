@@ -132,7 +132,7 @@ def check_player_win(tablero, turno):
     return False
 
 
-def play_game(event):
+def play_game(fila, columna):
     global tablero
     global turno
     global cont
@@ -140,11 +140,6 @@ def play_game(event):
 
     global pos_fil
     global pos_col
-
-
-    clic_x, clic_y = event.pos
-    fila = get_fila(clic_y)
-    columna = get_columna(clic_x)
 
     # general checking
     if debo_reiniciar:
@@ -259,7 +254,12 @@ while True:
             pygame.mixer.music.stop()
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            play_game(event)
+            
+            clic_x, clic_y = event.pos
+            fila = get_fila(clic_y)
+            columna = get_columna(clic_x)
+
+            play_game(fila, columna)
             check_reset(event)
 
     if limpiar:
