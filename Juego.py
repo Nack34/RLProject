@@ -31,7 +31,7 @@ PANTALLA.blits(background)
 """
 
 #Ventana
-pygame.display.set_caption("Guerrero")
+pygame.display.set_caption("Tictactoe")
 icono = pygame.image.load("images/icons/icono_ventana.png")
 pygame.display.set_icon(icono)
 
