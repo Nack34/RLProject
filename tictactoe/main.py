@@ -2,159 +2,28 @@ import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO, NEGRO
-import random
 from button import Button
+from classes import Tablero
 
-PANTALLA, FPS, RELOJ, img_o, img_x = init_game(pygame)
+PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
-# variables globales
-
-tablero = [
-    [0,0,0], 
-    [0,0,0], 
-    [0,0,0]
-    ]
-
-# saber quien va, saber si tenes q reiniciar por ganar o ocupar todos los recuadros
-turno = 1 #1 == x; 2 == o
-limpiar = False
-cont = 0
-debo_reiniciar = False
-
-
-# depende cual cuadrado es, marco el punto del pos_x (300, 490, 670) izquierda a derecha, en aumento 180
-pos_col = 310 
-# depende cual cuadrado es, marco el punto del pos_y (80, 260, 440) arriba hacia abajo, en aumento 180
-pos_fil = 80
-
-
-
-#mov vertical (sector arr,med,abj)
-def get_fila(clic_y):
-    fila = None
-    if 35 <= clic_y <= 205:
-        fila = 0
-    elif 215 <= clic_y <= 385:
-        fila = 1
-    elif 395 <= clic_y <= 565:
-        fila = 2
-
-    return fila
-
-#mov horizontal (sector izq,med,der)
-def get_columna(clic_x):
-    col = None
-    if 275 <= clic_x <= 445:
-        col = 0
-    elif 455 <= clic_x <= 625:
-        col = 1
-    elif 635 <= clic_x <= 805:
-        col = 2
-    
-    return col
-
-
-def check_player_win(tablero, turno):
-    # Verificar filas
-    for fila in range(3):
-        if all(celda == turno for celda in tablero[fila]):
-            return True
-
-    # Verificar columnas
-    for columna in range(3):
-        if all(tablero[fila][columna] == turno for fila in range(3)):
-            return True
-
-    # Verificar diagonal principal
-    if all(tablero[i][i] == turno for i in range(3)):
-        return True
-
-    # Verificar diagonal secundaria
-    if all(tablero[i][2 - i] == turno for i in range(3)):
-        return True
-
-    # Si no hay ganador
-    return False
-
-
-def play_game(fila, columna):
-    global tablero
-    global turno
-    global cont
-    global debo_reiniciar
-
-    global pos_fil
-    global pos_col
-
-    # general checking
-    if debo_reiniciar:
-        return
-    
-    if fila is None or columna is None:
-        raise InvalidInputError("No le pegaste a nada, negro")
-    
-    if tablero[fila][columna] != 0:
-        raise CellOccupiedError("Ya está ocupado, negro usurero")
-
-
-    #updating internal structure
-    tablero[fila][columna] = turno
-
-
-    #start to updating screen to ther player
-    icon_to_draw = img_x if turno == 1 else img_o
-
-
-    pos_x_to_draw = pos_col + (180 * columna)
-    pos_y_to_draw = pos_fil + (180 * fila)
-
-
-    PANTALLA.blit(icon_to_draw, (pos_x_to_draw, pos_y_to_draw))
-
-
-    #checking if player has won
-    if check_player_win(tablero, turno):
-        turno = 2 if turno == 1 else 1
-        debo_reiniciar = True
-        return
-
-
-
-    cont += 1
-    if cont == 9:
-        debo_reiniciar = True
-    
-
-    turno = 2 if turno == 1 else 1
 
 
 def check_reset(event):
-    global tablero
-    global debo_reiniciar
-    global limpiar
-    global cont
-
     clic_x, clic_y = event.pos
 
     if 900 <= clic_x <= 1050 and 100 <= clic_y <= 150:
-        tablero = [ [0,0,0], [0,0,0], [0,0,0] ]
-        limpiar = True
-        debo_reiniciar = False
-        cont = 0
+        return True
+    return False
 
 def check_exit(event):
-    global tablero
-    global debo_reiniciar
-    global turno
-    global cont
     clic_x, clic_y = event.pos
 
     if 900 <= clic_x <= 1050 and 200 <= clic_y <= 250:
-        tablero = [ [0,0,0], [0,0,0], [0,0,0] ]
-        debo_reiniciar = False
-        turno = 1
-        cont = 0
-        main_menu()
+        return True
+    return False
+
+
 
 def draw_tic_tac_toe_board():
     # Tamaño de cada celda
@@ -174,7 +43,6 @@ def draw_tic_tac_toe_board():
         pygame.draw.line(PANTALLA, ROJO, (margin_left + cell_size * i, margin_top),
                          (margin_left + cell_size * i, margin_top + cell_size * 3), 5)
 
-
 def draw_reset_button():
     pygame.draw.rect(PANTALLA, VERDE, (900, 100, 150, 50))  # Botón
     font = pygame.font.SysFont(None, 40)
@@ -187,127 +55,144 @@ def draw_exit_button():
     texto = font.render("Volver", True, BLANCO)
     PANTALLA.blit(texto, (930, 210))
 
-# already all configured, show all draws on display
-PANTALLA.fill(BLANCO)
-draw_reset_button()
-draw_tic_tac_toe_board()
 
-contra_la_maquina = True
-def random_machine_play():
-    logro = False
-    cant_intentos = 0
-    while not logro:
-        fila = random.randint(0, 2)
-        columna = random.randint(0, 2)
-        try:
-            play_game(fila, columna)
-            logro = True
-        except (InvalidInputError, CellOccupiedError) as e:
-            cant_intentos+=1
-            if cant_intentos == 10:
-                print("La maquina fallo demasiado. TODO: hacer que solo pueda elegir random alguno de los lugares libres y listo")
-                return
 
-def player_vs_bot():
-    pygame.display.set_caption("PvP")
-    global limpiar
+#intent mio
+def player_vs_bot(img_x, img_o, PANTALLA):
+    pygame.display.set_caption("PvB")    
 
     PANTALLA.fill(BLANCO)
     draw_reset_button()
     draw_exit_button()
     draw_tic_tac_toe_board()
 
+    tablero = Tablero(img_x, img_o)
+    turno = 1
+    seguir_jugando = True
+    
+    EJECUTAR_FUNCION = pygame.USEREVENT + 1
 
-    while True:
+    # Bandera para saber si el temporizador está activo
+    temporizador_activo = False
+
+    player_jugo = False
+    termino =  False
+
+
+    while seguir_jugando:
         for event in pygame.event.get():
-            if event.type == QUIT: # type: ignore
+
+            if event.type == QUIT: #type: ignore
                 pygame.quit()
                 sys.exit()
                 pygame.mixer.music.stop()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                clic_x, clic_y = event.pos
-                fila = get_fila(clic_y)
-                columna = get_columna(clic_x)
+                if check_reset(event) and not temporizador_activo:
+                    PANTALLA.fill(BLANCO)
+                    draw_reset_button()
+                    draw_exit_button()
+                    draw_tic_tac_toe_board()
+                    tablero = Tablero(img_x, img_o)
+                    turno = 1
+                    termino = False
+                    player_jugo = False
 
+                elif check_exit(event) and not temporizador_activo:
+                    seguir_jugando = False
+
+                elif  not player_jugo and not termino and not temporizador_activo:
+                    try:
+                        clic_x, clic_y = event.pos
+                        
+                        termino = tablero.marcar(turno, clic_x, clic_y, PANTALLA)
+                        player_jugo = True
+                        #changing turn
+                        if not termino:
+                            turno = 2 if turno == 1 else 1 
+                            pygame.time.set_timer(EJECUTAR_FUNCION, 1000)  # Inicia el temporizador
+                            temporizador_activo = True
+                            print("Temporizador activado.")
+
+                    except (InvalidInputError, CellOccupiedError) as e:
+                        print(e)
+
+
+            if event.type == EJECUTAR_FUNCION and temporizador_activo:
+                print("llegue2")
+                # Ejecuta la función cuando se activa el temporizador
+                termino = tablero.marcar_aleatorio(turno, PANTALLA)
+                # Detiene el temporizador
+                pygame.time.set_timer(EJECUTAR_FUNCION, 0)
+                temporizador_activo = False
                 player_jugo = False
-                try:
-                    play_game(fila, columna)
-                    player_jugo = True
-                except (InvalidInputError, CellOccupiedError) as e:
-                    print(e)
+                if not termino:
+                    turno = 2 if turno == 1 else 1 
 
-                if player_jugo and contra_la_maquina:
-                    random_machine_play()
-
-
-                check_reset(event)
-                check_exit(event)
-
-        if limpiar:
-            PANTALLA.fill(BLANCO)
-            draw_reset_button()
-            draw_exit_button()
-            draw_tic_tac_toe_board()
-            limpiar = False
-
+               
         pygame.display.update()
         RELOJ.tick(FPS)
 
-
-def player_vs_player():
-    pygame.display.set_caption("PvP")
-    global limpiar
+def player_vs_player(img_x, img_o, PANTALLA):
+    pygame.display.set_caption("PvP")    
 
     PANTALLA.fill(BLANCO)
     draw_reset_button()
     draw_exit_button()
     draw_tic_tac_toe_board()
 
+    tablero = Tablero(img_x, img_o)
+    turno = 1
+    seguir_jugando = True
+    termino = False
 
-    while True:
+    while seguir_jugando:
         for event in pygame.event.get():
-            if event.type == QUIT:
+
+            if event.type == QUIT: #type: ignore
                 pygame.quit()
                 sys.exit()
                 pygame.mixer.music.stop()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                clic_x, clic_y = event.pos
-                fila = get_fila(clic_y)
-                columna = get_columna(clic_x)
+                if check_reset(event):
+                    PANTALLA.fill(BLANCO)
+                    draw_reset_button()
+                    draw_exit_button()
+                    draw_tic_tac_toe_board()
+                    tablero = Tablero(img_x, img_o)
+                    turno = 1
+                    termino = False
 
-                try:
-                    play_game(fila, columna)
-                except (InvalidInputError, CellOccupiedError) as e:
-                    print(e)
+                elif check_exit(event):
+                    seguir_jugando = False
+
+                elif not termino:
+                    try:
+                        clic_x, clic_y = event.pos
+                        
+                        termino = tablero.marcar(turno, clic_x, clic_y, PANTALLA)
+                        #changing turn
+                        if not termino:
+                            turno = 2 if turno == 1 else 1
+
+                    except (InvalidInputError, CellOccupiedError) as e:
+                        print(e)
 
 
-                check_reset(event)
-                check_exit(event)
-
-        if limpiar:
-            PANTALLA.fill(BLANCO)
-            draw_reset_button()
-            draw_exit_button()
-            draw_tic_tac_toe_board()
-            limpiar = False
-
+               
         pygame.display.update()
         RELOJ.tick(FPS)
+
+
 
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font(None, size)
 
 def main_menu(): # main menu screen
-    pygame.display.set_caption("Menu principal")
-    PANTALLA.fill(NEGRO)
-    fondo = pygame.image.load("images/background/tic-tac-toe-background.jpg")
-
     while True:
-        PANTALLA.blit(fondo, (50, 0))
+        PANTALLA.fill(NEGRO)
+        pygame.display.set_caption("Tictactoe")
         
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         
@@ -321,6 +206,7 @@ def main_menu(): # main menu screen
         QUIT_BUTTON = Button(image = pygame.image.load("images/buttons/Quit-Rect.png"), pos = (540, 500), 
                              text_input = "Quit", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
 
+        PANTALLA.blit(fondo, (0, 0))
         PANTALLA.blit(MENU_TXT, MENU_RECT)
 
         for button in [PVP_BUTTON, PVB_BUTTON, QUIT_BUTTON]:
@@ -333,9 +219,9 @@ def main_menu(): # main menu screen
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs_player()
+                    player_vs_player(img_x, img_o, PANTALLA)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs_bot() # Falta
+                    player_vs_bot(img_x, img_o, PANTALLA)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()

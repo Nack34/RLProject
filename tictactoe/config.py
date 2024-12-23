@@ -21,6 +21,10 @@ def init_game(pygame):
     icono = pygame.image.load("images/icons/icono_ventana.png")
     pygame.display.set_icon(icono)
 
+    #bg
+    fondo = pygame.image.load("images/background/tic-tac-toe-background.jpg")
+    fondo = pygame.transform.scale(fondo, (ancho_ventana, alto_ventana))
+
     #add icons to play
     img_o = pygame.image.load("images/tictactoe/o.png")
     img_x = pygame.image.load("images/tictactoe/x.png")
@@ -37,5 +41,5 @@ def init_game(pygame):
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
 
-    return (PANTALLA, FPS, RELOJ, img_o, img_x)
+    return (PANTALLA, FPS, RELOJ, img_o, img_x, fondo)
 
