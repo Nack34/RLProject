@@ -1,8 +1,9 @@
 import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
-from config import init_game, VERDE, ROJO, BLANCO
+from config import init_game, VERDE, ROJO, BLANCO, NEGRO
 import random
+from button import Button
 
 PANTALLA, FPS, RELOJ, img_o, img_x = init_game(pygame)
 
@@ -141,6 +142,20 @@ def check_reset(event):
         debo_reiniciar = False
         cont = 0
 
+def check_exit(event):
+    global tablero
+    global debo_reiniciar
+    global turno
+    global cont
+    clic_x, clic_y = event.pos
+
+    if 900 <= clic_x <= 1050 and 200 <= clic_y <= 250:
+        tablero = [ [0,0,0], [0,0,0], [0,0,0] ]
+        debo_reiniciar = False
+        turno = 1
+        cont = 0
+        main_menu()
+
 def draw_tic_tac_toe_board():
     # Tamaño de cada celda
     cell_size = 180
@@ -166,6 +181,12 @@ def draw_reset_button():
     texto = font.render("Reiniciar", True, BLANCO)
     PANTALLA.blit(texto, (910, 110))
 
+def draw_exit_button():
+    pygame.draw.rect(PANTALLA, VERDE, (900, 200, 150, 50))  # Botón
+    font = pygame.font.SysFont(None, 40)
+    texto = font.render("Volver", True, BLANCO)
+    PANTALLA.blit(texto, (930, 210))
+
 # already all configured, show all draws on display
 PANTALLA.fill(BLANCO)
 draw_reset_button()
@@ -187,37 +208,138 @@ def random_machine_play():
                 print("La maquina fallo demasiado. TODO: hacer que solo pueda elegir random alguno de los lugares libres y listo")
                 return
 
-while True:
-    for event in pygame.event.get():
-        if event.type == QUIT: # type: ignore
-            pygame.quit()
-            sys.exit()
-            pygame.mixer.music.stop()
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:
+def player_vs_bot():
+    pygame.display.set_caption("PvP")
+    global limpiar
+
+    PANTALLA.fill(BLANCO)
+    draw_reset_button()
+    draw_exit_button()
+    draw_tic_tac_toe_board()
+
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT: # type: ignore
+                pygame.quit()
+                sys.exit()
+                pygame.mixer.music.stop()
             
-            clic_x, clic_y = event.pos
-            fila = get_fila(clic_y)
-            columna = get_columna(clic_x)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                
+                clic_x, clic_y = event.pos
+                fila = get_fila(clic_y)
+                columna = get_columna(clic_x)
 
-            player_jugo = False
-            try:
-                play_game(fila, columna)
-                player_jugo = True
-            except (InvalidInputError, CellOccupiedError) as e:
-                print(e)
+                player_jugo = False
+                try:
+                    play_game(fila, columna)
+                    player_jugo = True
+                except (InvalidInputError, CellOccupiedError) as e:
+                    print(e)
 
-            if player_jugo and contra_la_maquina:
-                random_machine_play()
+                if player_jugo and contra_la_maquina:
+                    random_machine_play()
 
 
-            check_reset(event)
+                check_reset(event)
+                check_exit(event)
 
-    if limpiar:
-        PANTALLA.fill(BLANCO)
-        draw_reset_button()
-        draw_tic_tac_toe_board()
-        limpiar = False
+        if limpiar:
+            PANTALLA.fill(BLANCO)
+            draw_reset_button()
+            draw_exit_button()
+            draw_tic_tac_toe_board()
+            limpiar = False
 
-    pygame.display.update()
-    RELOJ.tick(FPS)
+        pygame.display.update()
+        RELOJ.tick(FPS)
+
+
+def player_vs_player():
+    pygame.display.set_caption("PvP")
+    global limpiar
+
+    PANTALLA.fill(BLANCO)
+    draw_reset_button()
+    draw_exit_button()
+    draw_tic_tac_toe_board()
+
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+                pygame.mixer.music.stop()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                
+                clic_x, clic_y = event.pos
+                fila = get_fila(clic_y)
+                columna = get_columna(clic_x)
+
+                try:
+                    play_game(fila, columna)
+                except (InvalidInputError, CellOccupiedError) as e:
+                    print(e)
+
+
+                check_reset(event)
+                check_exit(event)
+
+        if limpiar:
+            PANTALLA.fill(BLANCO)
+            draw_reset_button()
+            draw_exit_button()
+            draw_tic_tac_toe_board()
+            limpiar = False
+
+        pygame.display.update()
+        RELOJ.tick(FPS)
+
+def get_font(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font(None, size)
+
+def main_menu(): # main menu screen
+    pygame.display.set_caption("Menu principal")
+    PANTALLA.fill(NEGRO)
+    fondo = pygame.image.load("images/background/tic-tac-toe-background.jpg")
+
+    while True:
+        PANTALLA.blit(fondo, (50, 0))
+        
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        
+        MENU_TXT = get_font(100).render("Main Menu", True, "#30d1cc")
+        MENU_RECT = MENU_TXT.get_rect(center = (540, 50)) #Probar centralizado
+
+        PVP_BUTTON = Button(image = pygame.image.load("images/buttons/PvP-Rect.png"), pos = (540, 200), 
+                            text_input = "Player vs Player", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
+        PVB_BUTTON = Button(image = pygame.image.load("images/buttons/PvB-Rect.png"), pos = (540, 350),
+                            text_input = "Player vs Bot", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
+        QUIT_BUTTON = Button(image = pygame.image.load("images/buttons/Quit-Rect.png"), pos = (540, 500), 
+                             text_input = "Quit", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
+
+        PANTALLA.blit(MENU_TXT, MENU_RECT)
+
+        for button in [PVP_BUTTON, PVB_BUTTON, QUIT_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(PANTALLA)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    player_vs_player()
+                if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    player_vs_bot() # Falta
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.quit()
+                    sys.exit()
+        pygame.display.update()
+
+
+main_menu()
