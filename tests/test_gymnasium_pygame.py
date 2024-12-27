@@ -39,7 +39,7 @@ while running:
     # Reiniciar el entorno si termina
     if done:
         pass
-        #env.reset()
+        #env.reset() # TODO: ACA TENDRIA QUE ESTAR EL RESET, LO COMENTE PARA QUE SE VEA QUE NO HAY UN MODELO DE IA ENTRENADO
 
     clock.tick(fps)
 
