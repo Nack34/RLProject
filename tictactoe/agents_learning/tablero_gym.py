@@ -1,7 +1,14 @@
 import gymnasium as gym
 from gymnasium import spaces
-from error_classes import InvalidInputError, CellOccupiedError
 import numpy as np
+import sys
+import os
+
+# Agregar la carpeta padre al path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from error_classes import InvalidInputError, CellOccupiedError
+
 
 '''class Actions(Enum):
     LEFT_UP = 0
@@ -26,6 +33,7 @@ class Tablero(gym.Env):
             dtype=np.int8  # El tipo de datos, ya que usamos enteros pequeños
         )
 
+        self.action_space = spaces.Tuple((spaces.Discrete(3), spaces.Discrete(3)))
 
 
     def reset(self, seed=None, options=None):
@@ -33,11 +41,8 @@ class Tablero(gym.Env):
         super().reset(seed=seed)
         
         #Initial state
-        self.tablero = [
-            [0,0,0], 
-            [0,0,0], 
-            [0,0,0]
-        ]
+        self.tablero = np.zeros((3, 3), dtype=np.int8)
+
         #cuadros pintados
         self.cont = 0
 
@@ -80,7 +85,7 @@ class Tablero(gym.Env):
         return libres
 
 
-    def _get_recompensa():
+    def _get_recompensa(self):
         return 0
     
     def step(self, action):
@@ -115,9 +120,13 @@ class Tablero(gym.Env):
         reward = self._get_recompensa()
         return self.tablero, reward, terminated, False, ""
     
-    def render(self):
+    def render(self, mode='human'):
+        print("\n".join([" ".join(map(str, row)) for row in self.tablero]))
+        print()
+
+    '''def render(self):
         if self.render_mode == "rgb_array":
-            return self._render_frame()
+            return self._render_frame()'''
 
     def _render_frame(self):
         pass # usar get_pos_pintar

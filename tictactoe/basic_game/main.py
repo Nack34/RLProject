@@ -1,7 +1,7 @@
 import random
 import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
-from error_classes import InvalidInputError, CellOccupiedError
+from tictactoe.error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO, NEGRO
 from button import Button
 from tablero import Tablero

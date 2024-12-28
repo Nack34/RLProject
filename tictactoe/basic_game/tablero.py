@@ -1,4 +1,4 @@
-from error_classes import InvalidInputError, CellOccupiedError
+from tictactoe.error_classes import InvalidInputError, CellOccupiedError
 
 class Tablero():
     def __init__(self):
