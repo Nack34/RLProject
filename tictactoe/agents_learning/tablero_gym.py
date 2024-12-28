@@ -3,7 +3,7 @@ from gymnasium import spaces
 import numpy as np
 import sys
 import os
-#import pygame
+import pygame
 
 # Agregar la carpeta padre al path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -153,7 +153,7 @@ class Tablero(gym.Env):
     
 
 
-    def render(self, mode='human'):
+    def render(self, mode=None):
         if mode is None:
             mode = self.render_mode
 
@@ -161,7 +161,7 @@ class Tablero(gym.Env):
             # Text-based rendering
             print("\n".join([" ".join([("." if cell == 0 else "X" if cell == 1 else "O") for cell in row]) for row in self.tablero]))
             print()
-            
+
             if self.terminated:
                 if not self.winner:
                     mensaje = "GAME TERMINATED: DRAW"
