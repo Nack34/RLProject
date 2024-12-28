@@ -4,7 +4,7 @@ from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO, NEGRO
 from button import Button
-from classes import Tablero
+from tictactoe.tablero import Tablero
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
