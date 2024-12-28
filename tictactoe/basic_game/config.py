@@ -18,16 +18,16 @@ def init_game(pygame):
 
     #Ventana
     pygame.display.set_caption("Tictactoe")
-    icono = pygame.image.load("images/icons/icono_ventana.png")
+    icono = pygame.image.load("../images/icons/icono_ventana.png")
     pygame.display.set_icon(icono)
 
     #bg
-    fondo = pygame.image.load("images/background/tic-tac-toe-background.jpg")
+    fondo = pygame.image.load("../images/background/tic-tac-toe-background.jpg")
     fondo = pygame.transform.scale(fondo, (ancho_ventana, alto_ventana))
 
     #add icons to play
-    img_o = pygame.image.load("images/tictactoe/o.png")
-    img_x = pygame.image.load("images/tictactoe/x.png")
+    img_o = pygame.image.load("../images/tictactoe/o.png")
+    img_x = pygame.image.load("../images/tictactoe/x.png")
 
     img_o = pygame.transform.scale(img_o, (100, 100))
     img_x = pygame.transform.scale(img_x, (100, 100))
@@ -35,7 +35,7 @@ def init_game(pygame):
 
     #add & config audio
     pygame.mixer.init()
-    pygame.mixer.music.load("sounds/loop.mp3")
+    pygame.mixer.music.load("../sounds/loop.mp3")
 
     # (-1 indica bucle infinito)
     pygame.mixer.music.play(-1)

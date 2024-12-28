@@ -4,7 +4,7 @@ from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO, NEGRO
 from button import Button
-from tictactoe.tablero import Tablero
+from tablero import Tablero
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
@@ -165,11 +165,11 @@ def main_menu(): # main menu screen
         MENU_TXT = get_font(100).render("Main Menu", True, "#30d1cc")
         MENU_RECT = MENU_TXT.get_rect(center = (540, 50)) #Probar centralizado
 
-        PVP_BUTTON = Button(image = pygame.image.load("images/buttons/PvP-Rect.png"), pos = (540, 200), 
+        PVP_BUTTON = Button(image = pygame.image.load("../images/buttons/PvP-Rect.png"), pos = (540, 200), 
                             text_input = "Player vs Player", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
-        PVB_BUTTON = Button(image = pygame.image.load("images/buttons/PvB-Rect.png"), pos = (540, 350),
+        PVB_BUTTON = Button(image = pygame.image.load("../images/buttons/PvB-Rect.png"), pos = (540, 350),
                             text_input = "Player vs Bot", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
-        QUIT_BUTTON = Button(image = pygame.image.load("images/buttons/Quit-Rect.png"), pos = (540, 500), 
+        QUIT_BUTTON = Button(image = pygame.image.load("../images/buttons/Quit-Rect.png"), pos = (540, 500), 
                              text_input = "Quit", font = get_font(75), base_color = "#abf7f2", hovering_color = BLANCO)
 
         PANTALLA.blit(fondo, (0, 0))
