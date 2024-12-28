@@ -1,3 +1,4 @@
+import random
 import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
 from error_classes import InvalidInputError, CellOccupiedError
@@ -7,6 +8,17 @@ from classes import Tablero
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
+
+def manejar_evento_cerrar():
+    pygame.quit()
+    sys.exit()
+    pygame.mixer.music.stop()
+
+
+def pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA):
+    pos_x_to_draw, pos_y_to_draw= tablero.get_pos_pintar(columna, fila)
+    icon_to_draw = img_x if turno == 1 else img_o
+    PANTALLA.blit(icon_to_draw, (pos_x_to_draw, pos_y_to_draw))
 
 
 def check_reset(event):
@@ -56,113 +68,41 @@ def draw_exit_button():
     PANTALLA.blit(texto, (930, 210))
 
 
-
-#intent mio
-def player_vs_bot(img_x, img_o, PANTALLA):
-    pygame.display.set_caption("PvB")    
-
+def start_match(PANTALLA, BLANCO):
     PANTALLA.fill(BLANCO)
     draw_reset_button()
     draw_exit_button()
     draw_tic_tac_toe_board()
 
-    tablero = Tablero(img_x, img_o)
+    tablero = Tablero()
     turno = 1
-    seguir_jugando = True
-    
+    termino = False
+
+    return (tablero, turno, termino)
+
+#intent mio
+def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot):
+
+    title = "PvB" if vsBot else "PvP"     
+    pygame.display.set_caption(title)
+
+    tablero, turno, termino = start_match(PANTALLA, BLANCO)
+    seguir_jugando = True 
+
+    # crear evento manual
     EJECUTAR_FUNCION = pygame.USEREVENT + 1
 
     # Bandera para saber si el temporizador está activo
     temporizador_activo = False
-
-    player_jugo = False
-    termino =  False
-
-
+    
     while seguir_jugando:
         for event in pygame.event.get():
-
             if event.type == QUIT: #type: ignore
-                pygame.quit()
-                sys.exit()
-                pygame.mixer.music.stop()
+                manejar_evento_cerrar()
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if check_reset(event) and not temporizador_activo:
-                    PANTALLA.fill(BLANCO)
-                    draw_reset_button()
-                    draw_exit_button()
-                    draw_tic_tac_toe_board()
-                    tablero = Tablero(img_x, img_o)
-                    turno = 1
-                    termino = False
-                    player_jugo = False
-
-                elif check_exit(event) and not temporizador_activo:
-                    seguir_jugando = False
-
-                elif  not player_jugo and not termino and not temporizador_activo:
-                    try:
-                        clic_x, clic_y = event.pos
-                        
-                        termino = tablero.marcar(turno, clic_x, clic_y, PANTALLA)
-                        player_jugo = True
-                        #changing turn
-                        if not termino:
-                            turno = 2 if turno == 1 else 1 
-                            pygame.time.set_timer(EJECUTAR_FUNCION, 1000)  # Inicia el temporizador
-                            temporizador_activo = True
-                            print("Temporizador activado.")
-
-                    except (InvalidInputError, CellOccupiedError) as e:
-                        print(e)
-
-
-            if event.type == EJECUTAR_FUNCION and temporizador_activo:
-                print("llegue2")
-                # Ejecuta la función cuando se activa el temporizador
-                termino = tablero.marcar_aleatorio(turno, PANTALLA)
-                # Detiene el temporizador
-                pygame.time.set_timer(EJECUTAR_FUNCION, 0)
-                temporizador_activo = False
-                player_jugo = False
-                if not termino:
-                    turno = 2 if turno == 1 else 1 
-
-               
-        pygame.display.update()
-        RELOJ.tick(FPS)
-
-def player_vs_player(img_x, img_o, PANTALLA):
-    pygame.display.set_caption("PvP")    
-
-    PANTALLA.fill(BLANCO)
-    draw_reset_button()
-    draw_exit_button()
-    draw_tic_tac_toe_board()
-
-    tablero = Tablero(img_x, img_o)
-    turno = 1
-    seguir_jugando = True
-    termino = False
-
-    while seguir_jugando:
-        for event in pygame.event.get():
-
-            if event.type == QUIT: #type: ignore
-                pygame.quit()
-                sys.exit()
-                pygame.mixer.music.stop()
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and ( (not vsBot) or (vsBot and not temporizador_activo ) ):
                 if check_reset(event):
-                    PANTALLA.fill(BLANCO)
-                    draw_reset_button()
-                    draw_exit_button()
-                    draw_tic_tac_toe_board()
-                    tablero = Tablero(img_x, img_o)
-                    turno = 1
-                    termino = False
+                    tablero, turno, termino = start_match(PANTALLA, BLANCO)
 
                 elif check_exit(event):
                     seguir_jugando = False
@@ -171,14 +111,40 @@ def player_vs_player(img_x, img_o, PANTALLA):
                     try:
                         clic_x, clic_y = event.pos
                         
-                        termino = tablero.marcar(turno, clic_x, clic_y, PANTALLA)
+                        columna = tablero.get_columna(clic_x)
+                        fila = tablero.get_fila(clic_y)
+
+                        termino = tablero.marcar(turno, columna, fila)
+
+                        pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA)
+                        
                         #changing turn
                         if not termino:
                             turno = 2 if turno == 1 else 1
+                            if vsBot:
+                                pygame.time.set_timer(EJECUTAR_FUNCION, 1000)  # Inicia el temporizador
+                                temporizador_activo = True
 
                     except (InvalidInputError, CellOccupiedError) as e:
                         print(e)
 
+            if vsBot and event.type == EJECUTAR_FUNCION and temporizador_activo:
+                libres = tablero.get_libres()
+                random_box = random.choice(libres)
+                fila, columna = random_box
+
+                # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
+                termino = tablero.marcar(turno, columna, fila)
+                
+                pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA)
+                    
+                # Detiene el temporizador
+                pygame.time.set_timer(EJECUTAR_FUNCION, 0)
+                temporizador_activo = False
+
+                #changing turn
+                if not termino:
+                    turno = 2 if turno == 1 else 1
 
                
         pygame.display.update()
@@ -215,16 +181,14 @@ def main_menu(): # main menu screen
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit
-                sys.exit()
+                manejar_evento_cerrar()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs_player(img_x, img_o, PANTALLA)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs_bot(img_x, img_o, PANTALLA)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pygame.quit()
-                    sys.exit()
+                    manejar_evento_cerrar()
         pygame.display.update()
 
 
