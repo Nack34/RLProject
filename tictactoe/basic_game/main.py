@@ -11,6 +11,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from error_classes import InvalidInputError, CellOccupiedError
+from agents_learning.training.monte_carlo_v7 import model_name as mt_v7
+from agents_learning.training.monte_carlo_v7 import model_predict as mt_v7_predict
 
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
@@ -88,19 +90,27 @@ def start_match(PANTALLA, BLANCO):
     return (tablero, turno, termino)
 
 #intent mio
-def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None):
+def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None, model_predict=None):
     def get_bot_choice(env, model=None):
         valid_actions = env.get_libres()
-        if model is None:
+        if model is None or model_predict is None:
             return random.choice(valid_actions)
         else:
             state = np.array(env.tablero)
-            q_values = model.predict(state.reshape(1, 3, 3), verbose=0)
-            flat_index = np.argmax(q_values)
-            action = [flat_index // 3, flat_index % 3]
+            action = model_predict(model, state.reshape(1, 3, 3), valid_actions)
 
             # Verificar si la acción es válida
             if action not in valid_actions:
+                print("CUIDADO")
+                print("CUIDADO")
+                print("CUIDADO")
+                print()
+                print("LA ACCION SELECCIONADA NO ES VALIDA")
+                print("SE SELECCIONARA UNA RANDOM")
+                print()
+                print("CUIDADO")
+                print("CUIDADO")
+                print("CUIDADO")
                 action = random.choice(valid_actions)  # Si no es válida, tomar una acción aleatoria
             
             return action
@@ -209,7 +219,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name="monte_carlo_model_v6.keras")
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name=mt_v7, model_predict=mt_v7_predict)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()

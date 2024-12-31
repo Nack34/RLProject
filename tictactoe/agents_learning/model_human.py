@@ -5,7 +5,10 @@ from error_classes import InvalidInputError, CellOccupiedError
 import random
 import numpy as np
 
-model_name = "monte_carlo_model_v6.keras"
+from training.monte_carlo_v7 import model_name as mt_v7
+from training.monte_carlo_v7 import model_predict as mt_v7_predict
+model_name = mt_v7
+model_predict = mt_v7_predict
 
 # Cargar el modelo guardado
 model = load_model("training/"+model_name)
@@ -27,9 +30,7 @@ for episode_number in range(cant_eps):
     while not done or truncated:
         try:
             # Usar el modelo para predecir la acción
-            q_values = model.predict(state.reshape(1, 3, 3), verbose=0)
-            flat_index = np.argmax(q_values)
-            action = [flat_index // 3, flat_index % 3]
+            action = model_predict(model, state.reshape(1, 3, 3), info["valid_actions"])
 
             # Verificar si la acción es válida
             if action not in info["valid_actions"]:

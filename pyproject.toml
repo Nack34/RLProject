@@ -11,6 +11,7 @@ python = "^3.12"
 pygame = "^2.6.1"
 gymnasium = {extras = ["atari"], version = "^1.0.0"}
 tensorflow = "^2.18.0"
+tensorflow-probability = {extras = ["tf"], version = "^0.25.0"}
 
 
 [build-system]

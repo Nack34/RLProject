@@ -177,6 +177,9 @@ class Tablero(gym.Env):
                 largo = len(mensaje) + 2  # Contando los dos espacios adicionales para los guiones
                 print(f"{'-' * (largo // 2)} {mensaje} {'-' * (largo // 2)}")
                 print()
+            
+            print()
+            
 
 
         
