@@ -5,10 +5,8 @@ from error_classes import InvalidInputError, CellOccupiedError
 import random
 import numpy as np
 
-from training.monte_carlo_v7 import model_name as mt_v7
-from training.monte_carlo_v7 import model_predict as mt_v7_predict
-model_name = mt_v7
-model_predict = mt_v7_predict
+from training.monte_carlo_v7_1 import model_name 
+from training.monte_carlo_v7_1 import model_predict
 
 # Cargar el modelo guardado
 model = load_model("training/"+model_name)

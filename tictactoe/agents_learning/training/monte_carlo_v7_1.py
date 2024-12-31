@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from tablero_gym import Tablero
 
 
-model_name = "monte_carlo_model_v7.keras"
+model_name = "monte_carlo_model_v7_1.keras"
 
 def model_predict(model, state, valid_actions):
     def mask_invalid_actions(q_values, valid_actions):
@@ -55,7 +55,7 @@ def main():
     epsilon = 1.0  # Probabilidad de exploración
     epsilon_decay = 0.99
     min_epsilon = 0.1
-    episodes = 1000
+    episodes = 10000
 
     # Crear el ambiente
     env = Tablero()

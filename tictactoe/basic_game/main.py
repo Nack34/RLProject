@@ -11,8 +11,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from error_classes import InvalidInputError, CellOccupiedError
-from agents_learning.training.monte_carlo_v7 import model_name as mt_v7
-from agents_learning.training.monte_carlo_v7 import model_predict as mt_v7_predict
+from agents_learning.training.monte_carlo_v7_1 import model_name as mt_v7
+from agents_learning.training.monte_carlo_v7_1 import model_predict as mt_v7_predict
 
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
@@ -76,8 +76,31 @@ def draw_exit_button():
     texto = font.render("Volver", True, BLANCO)
     PANTALLA.blit(texto, (930, 210))
 
+def get_bot_choice(env, model=None, model_predict=None):
+    valid_actions = env.get_libres()
+    if model is None or model_predict is None:
+        return random.choice(valid_actions)
+    else:
+        state = np.array(env.tablero)
+        action = model_predict(model, state.reshape(1, 3, 3), valid_actions)
 
-def start_match(PANTALLA, BLANCO):
+        # Verificar si la acción es válida
+        if action not in valid_actions:
+            print("CUIDADO")
+            print("CUIDADO")
+            print("CUIDADO")
+            print()
+            print("LA ACCION SELECCIONADA NO ES VALIDA")
+            print("SE SELECCIONARA UNA RANDOM")
+            print()
+            print("CUIDADO")
+            print("CUIDADO")
+            print("CUIDADO")
+            action = random.choice(valid_actions)  # Si no es válida, tomar una acción aleatoria
+        
+        return action
+
+def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model=None, model_predict=None):
     PANTALLA.fill(BLANCO)
     draw_reset_button()
     draw_exit_button()
@@ -86,42 +109,26 @@ def start_match(PANTALLA, BLANCO):
     tablero = Tablero()
     turno = 1
     termino = False
+    
+    if vsBot and bot_empieza and model is not None:
+        fila, columna = get_bot_choice(tablero, model, model_predict=model_predict)
+        # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
+        termino = tablero.marcar(turno, columna, fila)
+        pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA)
+        #changing turn
+        turno = 2 if turno == 1 else 1
 
     return (tablero, turno, termino)
 
 #intent mio
-def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None, model_predict=None):
-    def get_bot_choice(env, model=None):
-        valid_actions = env.get_libres()
-        if model is None or model_predict is None:
-            return random.choice(valid_actions)
-        else:
-            state = np.array(env.tablero)
-            action = model_predict(model, state.reshape(1, 3, 3), valid_actions)
-
-            # Verificar si la acción es válida
-            if action not in valid_actions:
-                print("CUIDADO")
-                print("CUIDADO")
-                print("CUIDADO")
-                print()
-                print("LA ACCION SELECCIONADA NO ES VALIDA")
-                print("SE SELECCIONARA UNA RANDOM")
-                print()
-                print("CUIDADO")
-                print("CUIDADO")
-                print("CUIDADO")
-                action = random.choice(valid_actions)  # Si no es válida, tomar una acción aleatoria
-            
-            return action
-    
+def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, bot_empieza=False, model_name = None, model_predict=None):
     
     model = None if model_name is None else load_model("../agents_learning/training/"+model_name)
 
     title = "PvB" if vsBot else "PvP"     
     pygame.display.set_caption(title)
 
-    tablero, turno, termino = start_match(PANTALLA, BLANCO)
+    tablero, turno, termino = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model=model, model_predict=model_predict)
     seguir_jugando = True 
 
     # crear evento manual
@@ -137,7 +144,7 @@ def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None, model_pr
             
             if event.type == pygame.MOUSEBUTTONDOWN and ( (not vsBot) or (vsBot and not temporizador_activo ) ):
                 if check_reset(event):
-                    tablero, turno, termino = start_match(PANTALLA, BLANCO)
+                    tablero, turno, termino = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model=model, model_predict=model_predict)
 
                 elif check_exit(event):
                     seguir_jugando = False
@@ -164,7 +171,7 @@ def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None, model_pr
                         print(e)
 
             if vsBot and event.type == EJECUTAR_FUNCION and temporizador_activo:
-                fila, columna = get_bot_choice(tablero, model)
+                fila, columna = get_bot_choice(tablero, model, model_predict=model_predict)
 
                 # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
                 termino = tablero.marcar(turno, columna, fila)
@@ -219,7 +226,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name=mt_v7, model_predict=mt_v7_predict)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=True, model_name=mt_v7, model_predict=mt_v7_predict)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()
