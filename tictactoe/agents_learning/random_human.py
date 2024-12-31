@@ -5,17 +5,6 @@ import random
 
 # Crear una instancia del entorno
 env = Tablero()
-'''
-# Usar el entorno
-state, _ = env.reset()
-env.render()
-
-# Realizar una acción
-action = (0,1)  # Ejemplo: marcar la primera celda
-obs, reward, done, truncated, info = env.step(action)
-env.render()
-
-'''
 cant_eps = 2
 
 for _ in range(cant_eps):

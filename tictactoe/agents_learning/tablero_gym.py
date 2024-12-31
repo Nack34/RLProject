@@ -121,7 +121,7 @@ class Tablero(gym.Env):
         return terminated, winner
 
     def _get_recompensa(self):
-        return 0
+        return -1 if self.winner is None else 5
     
     def step(self, action):
         info = {}
