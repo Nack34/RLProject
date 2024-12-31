@@ -118,4 +118,4 @@ for episode_number in range(episodes):
 
 env.close()
 
-model.save("monte_carlo_model_v5.keras")
+model.save("monte_carlo_model_v6.keras")

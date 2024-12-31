@@ -53,7 +53,7 @@ class Tablero(gym.Env):
             self.tablero[i, j] = 1
 
         #cuadros pintados
-        self.cont = 0
+        self.cont = 0 if self.turno_x else 1
 
         self.terminated = False
         self.winner = None

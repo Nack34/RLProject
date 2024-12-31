@@ -5,7 +5,7 @@ from error_classes import InvalidInputError, CellOccupiedError
 import random
 import numpy as np
 
-model_name = "monte_carlo_model_v5.keras"
+model_name = "monte_carlo_model_v6.keras"
 
 # Cargar el modelo guardado
 model = load_model("training/"+model_name)

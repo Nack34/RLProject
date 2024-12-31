@@ -209,7 +209,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name="monte_carlo_model_v5.keras")
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name="monte_carlo_model_v6.keras")
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()
