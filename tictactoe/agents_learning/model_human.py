@@ -5,7 +5,7 @@ from error_classes import InvalidInputError, CellOccupiedError
 import random
 import numpy as np
 
-model_name = "monte_carlo_model_v2.keras"
+model_name = "monte_carlo_model_v3.keras"
 
 # Cargar el modelo guardado
 model = load_model("training/"+model_name)
@@ -49,12 +49,9 @@ env.close()
 
 total_partidas=wins_x+wins_o+draws
 print(f"Recapitulacion: \n")
-print(f"Total de partidas: {total_partidas}")
-print(f"Cantidad de partidas ganadas por X: {wins_x}")
-print(f"Cantidad de partidas ganadas por O: {wins_o}")
-print(f"Empates: {draws}")
-print(f"Porcentaje de partidas ganadas por X: {wins_x/total_partidas}")
-print(f"Porcentaje de partidas ganadas por O: {wins_o/total_partidas}")
-print(f"Porcentaje de empates: {draws/total_partidas}")
+print(f"Total de partidas validas: {total_partidas}/{cant_eps} -> ({(total_partidas/cant_eps)*100})%")
+print(f"Ganadas por X: {wins_x}/{total_partidas} -> {(wins_x/total_partidas)*100}%")
+print(f"Ganadas por O: {wins_o}/{total_partidas} -> {(wins_o/total_partidas)*100}%")
+print(f"Termino empate: {draws}/{total_partidas} -> {(draws/total_partidas)*100}%")
 print()
 print()
