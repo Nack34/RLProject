@@ -110,13 +110,16 @@ def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model=None, mo
     turno = 1
     termino = False
     
-    if vsBot and bot_empieza and model is not None:
-        fila, columna = get_bot_choice(tablero, model, model_predict=model_predict)
-        # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
-        termino = tablero.marcar(turno, columna, fila)
-        pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA)
-        #changing turn
-        turno = 2 if turno == 1 else 1
+    if vsBot and model is not None:
+        if bot_empieza is None:
+            bot_empieza=random.choice([True, False])
+        if bot_empieza:
+            fila, columna = get_bot_choice(tablero, model, model_predict=model_predict)
+            # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
+            termino = tablero.marcar(turno, columna, fila)
+            pintar(tablero, turno, columna, fila, img_x, img_o, PANTALLA)
+            #changing turn
+            turno = 2 if turno == 1 else 1
 
     return (tablero, turno, termino)
 
@@ -226,7 +229,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=True, model_name=mt_v7, model_predict=mt_v7_predict)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=None, model_name=mt_v7, model_predict=mt_v7_predict)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()
