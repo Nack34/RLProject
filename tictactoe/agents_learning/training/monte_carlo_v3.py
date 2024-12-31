@@ -30,7 +30,7 @@ episodes = 1000
 # Crear el ambiente
 env = Tablero()
 
-def generate_episode(env): #TODO: QUE NO SEA SOLO 1, QUE SEAN 2 QUE COMPITAN (pero que sea en realidad 1)
+def generate_episode(env):
     def mask_invalid_actions(q_values, valid_actions):
         """
         Aplica una máscara para las acciones no válidas.

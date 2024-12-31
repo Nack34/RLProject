@@ -1,10 +1,17 @@
 import random
 import pygame, sys # type: ignore
 from pygame.locals import * # type: ignore
-from tictactoe.error_classes import InvalidInputError, CellOccupiedError
 from config import init_game, VERDE, ROJO, BLANCO, NEGRO
 from button import Button
 from tablero import Tablero
+from tensorflow.keras.models import load_model
+import numpy as np
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from error_classes import InvalidInputError, CellOccupiedError
+
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
@@ -81,7 +88,25 @@ def start_match(PANTALLA, BLANCO):
     return (tablero, turno, termino)
 
 #intent mio
-def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot):
+def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, model_name = None):
+    def get_bot_choice(env, model=None):
+        valid_actions = env.get_libres()
+        if model is None:
+            return random.choice(valid_actions)
+        else:
+            state = np.array(env.tablero)
+            q_values = model.predict(state.reshape(1, 3, 3), verbose=0)
+            flat_index = np.argmax(q_values)
+            action = [flat_index // 3, flat_index % 3]
+
+            # Verificar si la acción es válida
+            if action not in valid_actions:
+                action = random.choice(valid_actions)  # Si no es válida, tomar una acción aleatoria
+            
+            return action
+    
+    
+    model = None if model_name is None else load_model("../agents_learning/training/"+model_name)
 
     title = "PvB" if vsBot else "PvP"     
     pygame.display.set_caption(title)
@@ -129,9 +154,7 @@ def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot):
                         print(e)
 
             if vsBot and event.type == EJECUTAR_FUNCION and temporizador_activo:
-                libres = tablero.get_libres()
-                random_box = random.choice(libres)
-                fila, columna = random_box
+                fila, columna = get_bot_choice(tablero, model)
 
                 # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
                 termino = tablero.marcar(turno, columna, fila)
@@ -186,7 +209,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, model_name="monte_carlo_model_v5.keras")
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()

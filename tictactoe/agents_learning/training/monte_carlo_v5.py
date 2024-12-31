@@ -29,6 +29,8 @@ episodes = 1000
 
 # Crear el ambiente
 env = Tablero()
+env._penalizacion_por_tiempo = 0
+
 
 def generate_episode(env):
     def penalize_game_loss(episode):
@@ -109,4 +111,4 @@ for episode_number in range(episodes):
 
 env.close()
 
-model.save("monte_carlo_model_v4.keras")
+model.save("monte_carlo_model_v5.keras")

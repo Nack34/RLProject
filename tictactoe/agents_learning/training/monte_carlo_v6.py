@@ -7,7 +7,6 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from tablero_gym import Tablero
-from error_classes import InvalidInputError, CellOccupiedError
 
 # Definir el modelo
 model = models.Sequential([
@@ -29,6 +28,8 @@ episodes = 1000
 
 # Crear el ambiente
 env = Tablero()
+env._penalizacion_por_tiempo = 0
+
 
 def generate_episode(env):
     def penalize_game_loss(episode):
@@ -50,6 +51,12 @@ def generate_episode(env):
         return mask
     
     state, info = env.reset()
+    
+    print(f"First State:")
+    env.render()
+    print()
+    print()
+    
     done = False
     episode_memory_x = []
     episode_memory_o = []
@@ -79,6 +86,12 @@ def generate_episode(env):
         penalize_game_loss(episode_memory_x)
     elif info["winner"] == 2:
         penalize_game_loss(episode_memory_o)
+
+        
+    print(f"Last State:")
+    env.render()
+    print()
+    print()
         
     return episode_memory_x, episode_memory_o, state, info
 
@@ -95,10 +108,6 @@ def actualizacion_monte_carlo(episode):
 for episode_number in range(episodes):
     print(f"Episode: {episode_number}/{episodes}")
     episode_x, episode_o, last_state, last_info = generate_episode(env)
-    print(f"Last State:")
-    env.render()
-    print()
-    print()
     
     # Actualizar los valores Q usando Monte Carlo
     actualizacion_monte_carlo(episode_x)
@@ -109,4 +118,4 @@ for episode_number in range(episodes):
 
 env.close()
 
-model.save("monte_carlo_model_v4.keras")
+model.save("monte_carlo_model_v5.keras")

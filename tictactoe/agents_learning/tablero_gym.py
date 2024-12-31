@@ -35,7 +35,7 @@ class Tablero(gym.Env):
             shape=(3, 3),  # La forma de la matriz (3x3 para el tablero de ta-te-ti)
             dtype=np.int8  # El tipo de datos, ya que usamos enteros pequeños
         )
-
+        self._penalizacion_por_tiempo = -1
         self.action_space = spaces.Tuple((spaces.Discrete(3), spaces.Discrete(3)))
         self.render_mode = render_mode
         self.config_pygame()
@@ -45,9 +45,15 @@ class Tablero(gym.Env):
         super().reset(seed=seed)
         #Initial state
         self.tablero = np.zeros((3, 3), dtype=np.int8)
+        self.tablero = np.zeros((3, 3), dtype=np.int8)
+        self.turno_x = np.random.rand() < 0.1
+        
+        if not self.turno_x:
+            i, j = np.random.randint(0, 3, size=2)
+            self.tablero[i, j] = 1
+
         #cuadros pintados
         self.cont = 0
-        self.turno_x = True
 
         self.terminated = False
         self.winner = None
@@ -121,7 +127,7 @@ class Tablero(gym.Env):
         return terminated, winner
 
     def _get_recompensa(self):
-        return -1 if self.winner is None else 5
+        return self._penalizacion_por_tiempo if self.winner is None else 5
     
     def step(self, action):
         info = {}
