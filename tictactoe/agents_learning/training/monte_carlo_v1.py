@@ -24,7 +24,7 @@ gamma = 0.99  # Factor de descuento
 epsilon = 1.0  # Probabilidad de exploración
 epsilon_decay = 0.99
 min_epsilon = 0.1
-episodes = 100
+episodes = 1000
 
 # Crear el ambiente
 env = Tablero()
@@ -44,7 +44,8 @@ def generate_episode(env): #TODO: QUE NO SEA SOLO 1, QUE SEAN 2 QUE COMPITAN (pe
             action = [flat_index // 3, flat_index % 3]
             if action not in info["valid_actions"]:
                 action = random.choice(info["valid_actions"]) #TODO: QUe se termine el episodio y que sea penalizado con nose, -100
-        
+                print(f"Se produjo un error: InvalidInputError")
+
         next_state, reward, done, _, info = env.step(action)
         episode_memory.append((state, action, reward))
         state = next_state
@@ -52,8 +53,8 @@ def generate_episode(env): #TODO: QUE NO SEA SOLO 1, QUE SEAN 2 QUE COMPITAN (pe
     return episode_memory, state, info
 
 for episode_number in range(episodes):
-    episode, last_state, last_info = generate_episode(env)
     print(f"Episode: {episode_number}/{episodes}")
+    episode, last_state, last_info = generate_episode(env)
     print(f"Last State:")
     env.render()
     print()
@@ -74,4 +75,4 @@ for episode_number in range(episodes):
 
 env.close()
 
-model.save("monte_carlo_model.keras")
+model.save("monte_carlo_model_v1.keras")
