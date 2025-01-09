@@ -3,7 +3,7 @@ from gymnasium.spaces import Box
 
 import numpy as np
 
-class OptimalPolicy:
+class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que la funcion recursiva sea: value[state] = average de todas las acciones posibles(value[state+accion])
     class PlayerX:
         def __init__(self):
             self.id = 1
