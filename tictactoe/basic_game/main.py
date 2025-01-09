@@ -11,9 +11,10 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from error_classes import InvalidInputError, CellOccupiedError
-from agents_learning.training.monte_carlo_v7_1 import model_name as mt_v7
-from agents_learning.training.monte_carlo_v7_1 import model_predict as mt_v7_predict
+from agents.policies.monte_carlo_v7_1 import model_name as mt_v7
+from agents.policies.monte_carlo_v7_1 import model_predict as mt_v7_predict
 
+from agents.policies.optimal_policy import OptimalPolicy
 
 PANTALLA, FPS, RELOJ, img_o, img_x, fondo = init_game(pygame)
 
@@ -100,7 +101,7 @@ def get_bot_choice(env, model=None, model_predict=None):
         
         return action
 
-def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model=None, model_predict=None):
+def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model_name = "", model=None, model_predict=None):
     PANTALLA.fill(BLANCO)
     draw_reset_button()
     draw_exit_button()
@@ -113,6 +114,11 @@ def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model=None, mo
     if vsBot and model is not None:
         if bot_empieza is None:
             bot_empieza=random.choice([True, False])
+            
+        if model_name == "Optimal":
+            model = OptimalPolicy(1) if bot_empieza else OptimalPolicy(2)
+            model_predict = model.model_predict
+
         if bot_empieza:
             fila, columna = get_bot_choice(tablero, model, model_predict=model_predict)
             # Ejecuta la función cuando se activa el temporizador (marcar aleatorio)
@@ -121,17 +127,23 @@ def start_match(PANTALLA, BLANCO, vsBot=False, bot_empieza=False, model=None, mo
             #changing turn
             turno = 2 if turno == 1 else 1
 
-    return (tablero, turno, termino)
+    return (tablero, turno, termino, model, model_predict)
 
 #intent mio
 def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, bot_empieza=False, model_name = None, model_predict=None):
     
-    model = None if model_name is None else load_model("../agents_learning/training/"+model_name)
+    if model_name is None:
+        model = None
+    elif model_name == "Optimal":
+        model = OptimalPolicy(1) if bot_empieza else OptimalPolicy(2)
+        model_predict = model.model_predict
+    else:
+        model = load_model("../agents_learning/training/"+model_name)
 
     title = "PvB" if vsBot else "PvP"     
     pygame.display.set_caption(title)
 
-    tablero, turno, termino = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model=model, model_predict=model_predict)
+    tablero, turno, termino, model, model_predict = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model_name=model_name, model=model, model_predict=model_predict)
     seguir_jugando = True 
 
     # crear evento manual
@@ -147,7 +159,7 @@ def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, bot_empieza=False, model_na
             
             if event.type == pygame.MOUSEBUTTONDOWN and ( (not vsBot) or (vsBot and not temporizador_activo ) ):
                 if check_reset(event):
-                    tablero, turno, termino = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model=model, model_predict=model_predict)
+                    tablero, turno, termino, model, model_predict = start_match(PANTALLA, BLANCO, vsBot=vsBot, bot_empieza=bot_empieza, model_name=model_name, model=model, model_predict=model_predict)
 
                 elif check_exit(event):
                     seguir_jugando = False
@@ -229,7 +241,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=None, model_name=mt_v7, model_predict=mt_v7_predict)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=None, model_name="Optimal", model_predict=None)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()

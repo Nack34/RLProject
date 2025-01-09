@@ -1,0 +1,42 @@
+Ganar o empatar al empezar primero en tictactoe
+
+Step 1 Coloca la primera X en una esquina.
+1
+Coloca la primera X en una esquina. Los jugadores más experimentados colocan la primera “X” en una esquina cada vez que empiezan primero. Esto le da al oponente mayor oportunidad para cometer un error. Si tu oponente responde colocando una O en cualquier parte que no sea el centro, tienes una victoria garantizada.[1]
+En este ejemplo, serás quien empiece y el símbolo que usarás será la X. Tu oponente tiene el segundo turno y usa una O.
+Step 1 Coloca la primera X en una esquina.
+Step 2 Intenta ganar si tu oponente coloca la primera O en el centro.
+2
+Intenta ganar si tu oponente coloca la primera O en el centro. Si tu oponente juega su primera O en el centro, debes esperar a que cometa otro error antes de poder ganar. Si continúa jugando correctamente, el juego terminará en empate. Estas son dos opciones para tu segunda jugada, seguidas de instrucciones acerca de cómo ganar si tu oponente hace determinados movimientos (si no los hace, sigue bloqueando sus jugadas y el juego terminará en empate):
+Coloca la segunda X en la esquina opuesta a la primera, de modo que haya una línea vista como “X O X” en diagonal a lo largo del tablero. Si tu oponente responde con una O en una de las esquinas restantes, ¡habrás ganado![2] Coloca la tercera X en la última esquina vacía y tu oponente no podrá impedir que ganes colocando una cuarta.
+Step 2 Intenta ganar si tu oponente coloca la primera O en el centro.
+O, puedes colocar la segunda X en una casilla del borde (no en la esquina), sin tocar la primera X. Si tu oponente coloca una O en la esquina que no está al lado de dicha X, puedes usar la tercera para bloquear su movimiento y ganar automáticamente al colocar una cuarta X.
+Step 2 Intenta ganar si tu oponente coloca la primera O en el centro.
+Step 3 Gana automáticamente si tu oponente juega su primera O en cualquier casilla que no sea la del centro.
+3
+Gana automáticamente si tu oponente juega su primera O en cualquier casilla que no sea la del centro. Si tu oponente coloca su primera O en cualquier casilla que no sea la del centro, puedes ganar. Responde colocando tu segunda X en cualquier otra esquina, con un espacio vacío entre ambas X.
+Por ejemplo, supongamos que colocas la primera X en la casilla superior izquierda y tu oponente coloca una O en la casilla superior media. Puedes colocar la segunda X en la esquina inferior izquierda o derecha. No la coloques en la esquina superior derecha, ya que habría una O entre ambas X en lugar de un espacio vacío.
+Step 3 Gana automáticamente si tu oponente juega su primera O en cualquier casilla que no sea la del centro.
+Step 4 Coloca la tercera X de modo que tengas dos posibles movimientos para ganar.
+4
+Coloca la tercera X de modo que tengas dos posibles movimientos para ganar. La mayor parte del tiempo, tu oponente verá que tienes dos X en una fila y te bloqueará (si no lo hace, simplemente gana formando una fila de X). Después de que esto ocurra, debe haber una casilla vacía alineada con tus dos primeras X y sin ninguna O bloqueándola. Coloca la tercera X en esa casilla.
+Por ejemplo, toma un pedazo de papel y dibuja un tablero de tres en raya con la fila superior "X O _", la fila intermedia "O _ _" y la inferior "X _ _". Si colocas la tercera X en la esquina inferior derecha, estará alineada con las otras dos X.
+Step 5 Gana colocando la cuarta X.
+5
+Gana colocando la cuarta X. Después de colocar la tercera X, hay dos casillas vacías que te harán ganar el juego si colocas una X en una de ellas. Dado que tu oponente solo puede hacer una jugada, únicamente puede bloquear una de esas casillas. ¡Escribe la cuarta X en la casilla que no bloqueó y gana el juego!
+Método
+2
+Nunca perder al comenzar en segundo lugar
+PDF download
+Descargar el PDF
+Step 1 Si tu oponente comienza en la esquina, fuerza un empate.
+1
+Si tu oponente comienza en la esquina, fuerza un empate. Si tu oponente juega primero y comienza con una O en una esquina, siempre coloca la primera X en el centro. La segunda X debe estar en un borde, no en una esquina, a menos que necesites bloquear a tu oponente para que no complete tres O en una fila. Con esta estrategia, todos los juegos deben terminar en empate.[3] En teoría, puedes ganar desde esta posición, pero tu oponente tendría que cometer un gran error, como no ver que tienes dos X en una fila.
+En esta sección, tu oponente aún juega con las O, pero recuerda que él juega primero esta vez.
+Step 2 Fuerza a un empate cuando tu oponente empiece en el centro.
+2
+Fuerza a un empate cuando tu oponente empiece en el centro. Cuando tu oponente comience colocando una O en el centro, coloca tu primera X en una esquina. Después de eso, sigue bloqueándolo hasta que el juego termine en un empate.[4] Básicamente, no hay forma de que ganes desde esta posición, ¡a menos que tu oponente ya no trate de ganar o te impida hacerlo!
+Step 3 Intenta ganar si tu oponente comienza en el borde.
+3
+Intenta ganar si tu oponente comienza en el borde. La mayor parte del tiempo, tu oponente comenzará con una de las jugadas mencionadas anteriormente. Sin embargo, si coloca la primera O en un borde en lugar de en una esquina o en el centro, tienes una pequeña oportunidad de ganar. Coloca tu primera X en el centro. Si tu oponente coloca la segunda O en el borde opuesto, formando una fila o columna que sea vea “O-X-O”, coloca tu segunda X en una esquina. Si tu ponente pone la tercera O en la esquina opuesta, formando una línea diagonal “X-X-O”, haz la tercera X en la casilla vacía para bloquear ambas O en una fila. A partir de aquí, puede ganas colocando la cuarta X.[5]
+Si en algún momento tu oponente no hace la jugada exactamente como se describió anteriormente, tendrás que conformarte con un empate. Simplemente comienza a bloquear sus movimientos y ninguno ganará.

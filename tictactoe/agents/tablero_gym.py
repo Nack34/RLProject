@@ -36,6 +36,7 @@ class Tablero(gym.Env):
             dtype=np.int8  # El tipo de datos, ya que usamos enteros pequeños
         )
         self._penalizacion_por_tiempo = -1
+        self._recompensa_ganar = 5
         self.action_space = spaces.Tuple((spaces.Discrete(3), spaces.Discrete(3)))
         self.render_mode = render_mode
         self.config_pygame()
@@ -127,7 +128,7 @@ class Tablero(gym.Env):
         return terminated, winner
 
     def _get_recompensa(self):
-        return self._penalizacion_por_tiempo if self.winner is None else 5
+        return self._penalizacion_por_tiempo if self.winner is None else self._recompensa_ganar
     
     def step(self, action):
         info = {}
