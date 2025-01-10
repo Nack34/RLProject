@@ -1,6 +1,6 @@
 import numpy as np
 from gymnasium.spaces import Box
-
+import random
 import numpy as np
 
 class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que la funcion recursiva sea: value[state] = average de todas las acciones posibles(value[state+accion])
@@ -10,7 +10,7 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
             self.oponent_id = 2
 
         def _oponente_coloco_en_centro(self, n_step, flattened):
-            print(f"coloco centro, n_step = {n_step}")
+            #print(f"coloco centro, n_step = {n_step}")
             if n_step == 1: # Marcar la esquina opuesta a la que marque antes
                 if flattened[0] == 1:
                     return 8
@@ -24,7 +24,7 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
             return None            
                 
         def _oponente_coloco_en_borde(self, n_step, flattened):
-            print(f"coloco borde, n_step = {n_step}")
+            #print(f"coloco borde, n_step = {n_step}")
             if n_step == 1: # Marcar la esquina que no es la opuesta a la que marque, y que en el siguiente paso puedo ganar
                 if flattened[0] == 1:
                     if flattened[1] == 2: return 6
@@ -49,7 +49,7 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
 
             
         def _oponente_coloco_en_esquina(self, n_step, flattened):
-            print(f"coloco esquina, n_step = {n_step}")
+            #print(f"coloco esquina, n_step = {n_step}")
             if n_step == 1:
                 if (flattened[0] and flattened[8]) or (flattened[2] and flattened[6]): # si marco en la opuesta, marco en el centro
                     return 4
@@ -70,14 +70,14 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
             self.oponent_id = 1
 
         def _oponente_coloco_en_centro(self, n_step, flattened):
-            print(f"coloco centro, n_step = {n_step}")
+            #print(f"coloco centro, n_step = {n_step}")
             if n_step == 1:
                 return np.random.choice([0, 2, 6, 8])
                 
             return None            
                 
         def _oponente_coloco_en_borde(self, n_step, flattened):
-            print(f"coloco borde, n_step = {n_step}")
+            #print(f"coloco borde, n_step = {n_step}")
             if n_step == 1:
                 return 4
             elif n_step == 2: 
@@ -96,7 +96,7 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
             return None            
             
         def _oponente_coloco_en_esquina(self, n_step, flattened):
-            print(f"coloco esquina, n_step = {n_step}")
+            #print(f"coloco esquina, n_step = {n_step}")
             if n_step == 1:
                 return 4
                 
@@ -111,6 +111,10 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
         self._internal_strategy = None
         self.initial_step=True
         self._n_step = 0
+        print()
+        print()
+        print(f"Politica Optima: {"X" if self._player.id == 1 else "O"}")
+        print()
 
     def step(self, state):
         if self.initial_step and self._player.id == 1: # Paso 0: Colocar X en una esquina
@@ -164,13 +168,17 @@ class OptimalPolicy: # TODO: MODIFICAR ESTO USANDO DINAMIC PROGRAMING PARA que l
         else:
             return -1  # Retornar -1 si no hay posiciones disponibles
     
-    def model_predict(self, model, state, valid_actions): # Metodo ADAPTER
-        print("self._player.id: ")
-        print(self._player.id)
+    def model_predict(self, model, state, valid_actions=None): # Metodo ADAPTER
+        #print("self._player.id: ")
+        #print(self._player.id)
         numero = self.step(state)
         fila = numero // 3
         columna = numero % 3
-        return [fila, columna]
+
+        action = [fila, columna]
+        if action not in valid_actions:
+            action = random.choice(valid_actions)
+        return action
 
 def check_win(flattened, player):
     """Verifica si el jugador dado ha ganado."""

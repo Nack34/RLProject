@@ -11,8 +11,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from error_classes import InvalidInputError, CellOccupiedError
-from agents.policies.monte_carlo_v7_1 import model_name as mt_v7
-from agents.policies.monte_carlo_v7_1 import model_predict as mt_v7_predict
+from agents.policies.monte_carlo_v8_2 import model_name
+from agents.policies.monte_carlo_v8_2 import model_predict
 
 from agents.policies.optimal_policy import OptimalPolicy
 
@@ -138,7 +138,7 @@ def player_vs(img_x, img_o, PANTALLA, BLANCO, vsBot, bot_empieza=False, model_na
         model = OptimalPolicy(1) if bot_empieza else OptimalPolicy(2)
         model_predict = model.model_predict
     else:
-        model = load_model("../agents_learning/training/"+model_name)
+        model = load_model("../agents/policies/"+model_name)
 
     title = "PvB" if vsBot else "PvP"     
     pygame.display.set_caption(title)
@@ -241,7 +241,7 @@ def main_menu(): # main menu screen
                 if PVP_BUTTON.checkForInput(MENU_MOUSE_POS):
                     player_vs(img_x, img_o, PANTALLA, BLANCO, False)
                 if PVB_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=None, model_name="Optimal", model_predict=None)
+                    player_vs(img_x, img_o, PANTALLA, BLANCO, True, bot_empieza=None, model_name=model_name, model_predict=model_predict)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     manejar_evento_cerrar()
         pygame.display.update()

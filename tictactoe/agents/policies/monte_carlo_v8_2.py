@@ -1,17 +1,7 @@
-from tensorflow.keras import layers, models
 import tensorflow_probability as tfp
 import numpy as np
-import random
-from optimal_policy import OptimalPolicy
 
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from tablero_gym import Tablero
-
-
-model_name = "monte_carlo_model_v7_1.keras"
+model_name = "monte_carlo_model_v8_2.keras"
 
 def model_predict(model, state, valid_actions):
     def mask_invalid_actions(q_values, valid_actions):
@@ -40,6 +30,15 @@ def model_predict(model, state, valid_actions):
 
 
 def main():
+    from tensorflow.keras import layers, models
+    import random
+    from optimal_policy import OptimalPolicy
+
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+    from tablero_gym import Tablero
 
     # Definir el modelo
     model = models.Sequential([
@@ -56,25 +55,31 @@ def main():
     epsilon = 1.0  # Probabilidad de exploración
     epsilon_decay = 0.99
     min_epsilon = 0.1
-    episodes = 10000
+    episodes = 100000
 
     # Crear el ambiente
     env = Tablero()
     env._penalizacion_por_tiempo = 0
+    env._recompensa_ganar = 1
 
 
     def generate_episode(env):
         def penalize_game_loss(episode): # vamos a probar sin penalizar
             last_step = list(episode[-1])  
-            last_step[2] = -5  
+            last_step[2] = -1 
             episode[-1] = tuple(last_step)
         
         state, info = env.reset()
+        opponent = OptimalPolicy(1) if np.all(state == 0) else OptimalPolicy(2)
+        oponent_id = opponent._player.id
         
         print(f"First State:")
         env.render()
         
-        done = False
+        valid_actions = info["valid_actions"]
+        opponent_action = opponent.model_predict(None, state=state, valid_actions=valid_actions)
+        state, reward, done, _, info = env.step(opponent_action)
+
         episode_memory = []
         
         while not done:
@@ -88,8 +93,15 @@ def main():
 
             next_state, reward, done, _, info = env.step(action)
             episode_memory.append((state, action, reward))
-
             state = next_state
+
+            if not done:
+                valid_actions = info["valid_actions"]
+                opponent_action = opponent.model_predict(None, state=state, valid_actions=valid_actions)
+                state, reward, done, _, info = env.step(opponent_action)
+
+        if info["winner"] == oponent_id:
+            penalize_game_loss(episode_memory)
             
         print(f"Last State:")
         env.render()
